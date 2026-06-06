@@ -13,33 +13,59 @@
         const input = document.getElementById('message-input');
 
         async function fetchMessages() {
-            const response = await fetch('/messages');
-            const messages = await response.json();
-            
-            // Stop the script from crashing if it receives an error instead of an array
-            if (messages.error) {
-                console.error("Session error:", messages.error);
-                return; 
-            }
+            try {
+                // The '?t=' adds a timestamp to the URL. This is a "Cache Buster" that 
+                // forces Vercel and your browser to fetch fresh data every single time.
+                const response = await fetch('/messages?t=' + new Date().getTime());
+                
+                // If the server crashes (e.g., a 500 error from a database typo), 
+                // this catches it and prints it to the screen instead of crashing the page.
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    chatBox.innerHTML = `<div style="color: red; padding: 10px;">Server Error ${response.status}: Check your Vercel logs to see what crashed.</div>`;
+                    console.error("Server Error:", errorText);
+                    return;
+                }
 
-            chatBox.innerHTML = '';
-            messages.forEach(msg => {
-                chatBox.innerHTML += `<div><strong>${msg.sender}:</strong> ${msg.text}</div>`;
-            });
-            chatBox.scrollTop = chatBox.scrollHeight;
+                const messages = await response.json();
+                
+                if (messages.error) {
+                    chatBox.innerHTML = `<div style="color: orange; padding: 10px;">Session Error: ${messages.error}</div>`;
+                    return; 
+                }
+
+                // Render the messages
+                chatBox.innerHTML = '';
+                if (messages.length === 0) {
+                    chatBox.innerHTML = '<div style="color: gray; font-style: italic;">No messages yet.</div>';
+                } else {
+                    messages.forEach(msg => {
+                        chatBox.innerHTML += `<div><strong>${msg.sender}:</strong> ${msg.text}</div>`;
+                    });
+                }
+                
+                // Auto-scroll to the bottom
+                chatBox.scrollTop = chatBox.scrollHeight;
+                
+            } catch (err) {
+                // Catches network disconnects or Javascript breaking
+                chatBox.innerHTML = `<div style="color: red; padding: 10px;">Javascript Error: ${err.message}</div>`;
+            }
         }
 
         async function sendMessage() {
             const text = input.value;
             if (!text) return;
             
+            input.value = ''; // Clear the input box instantly for a better feel
+            
             await fetch('/send', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ text: text })
             });
-            input.value = '';
-            fetchMessages(); // Immediately update after sending
+            
+            fetchMessages(); // Pull the new message down immediately
         }
 
         // Poll for new messages every 2 seconds
