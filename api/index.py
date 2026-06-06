@@ -58,13 +58,17 @@ def get_messages():
     if 'user' not in session:
         return jsonify({"error": "Unauthorized"}), 401
     
-    # Fetch last 50 messages, ordered by creation time
-    response = (
-        supabase.table("messages")
-        .select("sender, text")
-        .order("created_at", ascending=True)
-        .limit(50)
-        .execute()
-    )
-    
-    return jsonify(response.data)
+    try:
+        # Fetch last 50 messages, ordered by creation time
+        response = (
+            supabase.table("messages")
+            .select("sender, text")
+            .order("created_at", desc=False) # <--- The bug is fixed here
+            .limit(50)
+            .execute()
+        )
+        return jsonify(response.data)
+        
+    except Exception as e:
+        # If any other error happens, this will catch it and send it to your screen
+        return str(e), 500
