@@ -15,6 +15,13 @@
         async function fetchMessages() {
             const response = await fetch('/messages');
             const messages = await response.json();
+            
+            // Stop the script from crashing if it receives an error instead of an array
+            if (messages.error) {
+                console.error("Session error:", messages.error);
+                return; 
+            }
+
             chatBox.innerHTML = '';
             messages.forEach(msg => {
                 chatBox.innerHTML += `<div><strong>${msg.sender}:</strong> ${msg.text}</div>`;
