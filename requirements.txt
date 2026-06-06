@@ -1,3 +1,7 @@
 Flask==3.0.0
+httpx==0.27.2
+gotrue==1.2.1
+postgrest==0.16.2
+realtime==1.0.4
+storage3==0.7.2
 supabase==2.4.0
-httpx<0.28.0
