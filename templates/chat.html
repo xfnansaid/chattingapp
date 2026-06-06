@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head><title>Chat</title></head>
+<body>
+    <h2>Welcome, {{ current_user }}</h2>
+    <div id="chat-box" style="height: 300px; border: 1px solid #ccc; overflow-y: scroll; margin-bottom: 10px; padding: 10px;"></div>
+    
+    <input type="text" id="message-input" placeholder="Type a message...">
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        const chatBox = document.getElementById('chat-box');
+        const input = document.getElementById('message-input');
+
+        async function fetchMessages() {
+            const response = await fetch('/messages');
+            const messages = await response.json();
+            chatBox.innerHTML = '';
+            messages.forEach(msg => {
+                chatBox.innerHTML += `<div><strong>${msg.sender}:</strong> ${msg.text}</div>`;
+            });
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const text = input.value;
+            if (!text) return;
+            
+            await fetch('/send', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: text })
+            });
+            input.value = '';
+            fetchMessages(); // Immediately update after sending
+        }
+
+        // Poll for new messages every 2 seconds
+        setInterval(fetchMessages, 2000);
+        fetchMessages(); // Load initially
+    </script>
+</body>
+</html>
