@@ -24,8 +24,8 @@ MOCK_MESSAGES = [
 ]
 
 USERS = {
-    "user1": "pass123", 
-    "user2": "pass456"
+    "xfnkl52": "XkumbaKunja@1.3", 
+    "sankjj": "xfnsankjj@1.3"
 }
 
 @app.route('/')
