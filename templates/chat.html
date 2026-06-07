@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>iMessage</title>
+    <!-- SVG-based Apple Messages Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23007aff' d='M12 2C6.48 2 2 6.02 2 11c0 2.22 1.1 4.3 3 5.76V21l4.4-2.64c.82.23 1.7.38 2.6.38 5.52 0 10-4.02 10-9s-4.48-9-10-9z'/%3E%3Cpath fill='%23fff' d='M12 10.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm-5 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm10 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3z' opacity='0.8'/%3E%3C/svg%3E">
     <style>
         :root {
             --bg-color: #ffffff;
@@ -29,6 +31,7 @@
             --reactions-border: rgba(0, 0, 0, 0.05);
             --reactions-shadow: rgba(0, 0, 0, 0.15);
             --meta-text: #8e8e93;
+            --panel-section-bg: #ffffff;
         }
 
         .dark {
@@ -55,6 +58,7 @@
             --reactions-border: rgba(255, 255, 255, 0.1);
             --reactions-shadow: rgba(0, 0, 0, 0.5);
             --meta-text: #636366;
+            --panel-section-bg: #1c1c1e;
         }
 
         * {
@@ -76,7 +80,6 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* App Container Layout */
         .app-container {
             display: flex;
             width: 100%;
@@ -97,7 +100,6 @@
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
-        /* Sidebar Header */
         .sidebar-header {
             padding: 20px 20px 10px 20px;
             display: flex;
@@ -138,7 +140,6 @@
             color: var(--text-primary);
         }
 
-        /* Search Bar */
         .search-container {
             padding: 0 20px 14px 20px;
             position: relative;
@@ -214,7 +215,7 @@
             display: block;
         }
 
-        /* Circle Avatars */
+        /* Circular Avatars */
         .avatar {
             width: 48px;
             height: 48px;
@@ -230,38 +231,14 @@
             position: relative;
             background: linear-gradient(135deg, #8e8e93, #636366);
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            overflow: hidden;
         }
 
-        .avatar.group {
-            background: transparent;
-        }
-
-        .avatar-sub {
-            width: 32px;
-            height: 32px;
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
             border-radius: 50%;
-            position: absolute;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            font-weight: 600;
-            border: 2px solid var(--sidebar-bg);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-        }
-
-        .avatar-sub-1 {
-            background: linear-gradient(135deg, #007aff, #0056b3);
-            top: 2px;
-            left: 2px;
-            z-index: 2;
-        }
-
-        .avatar-sub-2 {
-            background: linear-gradient(135deg, #a284ff, #733cff);
-            bottom: 2px;
-            right: 2px;
-            z-index: 1;
         }
 
         .conversation-info {
@@ -299,11 +276,6 @@
             text-overflow: ellipsis;
             white-space: nowrap;
             line-height: 1.3;
-        }
-
-        .conversation-item.unread .conversation-preview {
-            color: var(--text-primary);
-            font-weight: 500;
         }
 
         /* Active Chat Area Column */
@@ -391,6 +363,14 @@
             color: #fff;
             margin-bottom: 2px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
         }
 
         .header-name {
@@ -442,7 +422,6 @@
             scroll-behavior: smooth;
         }
 
-        /* Group Dividers */
         .date-divider {
             align-self: center;
             font-size: 12px;
@@ -453,7 +432,6 @@
             letter-spacing: 0.3px;
         }
 
-        /* Message Bubble Container */
         .message-row {
             display: flex;
             flex-direction: column;
@@ -517,6 +495,7 @@
             background: linear-gradient(180deg, #34c759 0%, #24b149 100%);
             border-bottom-right-radius: 4px;
             align-self: flex-end;
+            color: #ffffff;
         }
 
         /* Incoming (Gray) */
@@ -527,7 +506,7 @@
             align-self: flex-start;
         }
 
-        /* Bubble Tails using CSS masks & absolute items */
+        /* Bubble Tails using absolute items */
         .message-bubble.last::before {
             content: "";
             position: absolute;
@@ -581,7 +560,6 @@
             border-bottom-right-radius: 10px;
         }
 
-        /* Status Delivery Receipts */
         .status-receipt {
             font-size: 11px;
             font-weight: 500;
@@ -591,7 +569,7 @@
             align-self: flex-end;
         }
 
-        /* Tapback Floating Badges */
+        /* Reactions Floating Badges */
         .reactions-badge-container {
             position: absolute;
             top: -10px;
@@ -629,7 +607,149 @@
             transform: scale(1.15);
         }
 
-        /* Bouncing Typing Indicator Bubble */
+        /* Snaps Styling */
+        .snap-locked-bubble {
+            background: linear-gradient(135deg, #ff9500 0%, #ff5e00 100%) !important;
+            color: #ffffff !important;
+            padding: 12px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 149, 0, 0.3);
+            font-weight: 500;
+            display: inline-block;
+            transition: all 0.2s ease;
+        }
+
+        .snap-locked-bubble:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(255, 149, 0, 0.45);
+        }
+
+        .snap-revealed {
+            background: linear-gradient(135deg, #ff2d55 0%, #c61a3d 100%) !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 12px rgba(255, 45, 85, 0.3);
+            border-radius: 20px;
+        }
+
+        .snap-content-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            justify-content: space-between;
+            min-width: 120px;
+        }
+
+        .snap-timer {
+            background: rgba(0, 0, 0, 0.25);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+            animation: pulse 1s infinite;
+        }
+
+        .snap-expired-bubble {
+            background-color: var(--incoming-bubble-bg) !important;
+            color: var(--text-secondary) !important;
+            font-style: italic;
+            padding: 8px 14px;
+            border-radius: 15px;
+            display: inline-block;
+            opacity: 0.6;
+        }
+
+        /* Location Card Apple Maps Widget styling */
+        .map-card {
+            background-color: var(--panel-section-bg);
+            border: 1px solid var(--separator-color);
+            border-radius: 16px;
+            overflow: hidden;
+            width: 240px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-bottom: 4px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .map-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+
+        .map-grid-bg {
+            height: 90px;
+            background-color: #a3d2e2;
+            background-image: 
+                radial-gradient(circle, transparent 20%, #a3d2e2 20%, #a3d2e2 21%, transparent 21%),
+                linear-gradient(0deg, transparent 49%, rgba(255,255,255,0.4) 49%, rgba(255,255,255,0.4) 51%, transparent 51%),
+                linear-gradient(90deg, transparent 49%, rgba(255,255,255,0.4) 49%, rgba(255,255,255,0.4) 51%, transparent 51%);
+            background-size: 20px 20px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .map-radar {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(0, 122, 255, 0.15);
+            border: 2px solid rgba(0, 122, 255, 0.4);
+            animation: radarPulse 2s infinite ease-out;
+        }
+
+        .map-pin {
+            font-size: 28px;
+            z-index: 2;
+            animation: bounce 1.5s infinite;
+        }
+
+        .map-info {
+            padding: 10px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            background-color: var(--panel-section-bg);
+        }
+
+        .map-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .map-coords {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .map-btn {
+            background-color: var(--accent-color);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 6px;
+            cursor: pointer;
+            outline: none;
+            transition: opacity 0.2s;
+        }
+
+        .map-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* Typing Bouncing Bubble */
         .typing-indicator-container {
             align-self: flex-start;
             margin-left: 24px;
@@ -686,11 +806,6 @@
         .typing-dot:nth-child(2) { animation-delay: 0.2s; }
         .typing-dot:nth-child(3) { animation-delay: 0.4s; }
 
-        @keyframes typingBounce {
-            0%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-6px); }
-        }
-
         /* Keyboard Input Area Capsule */
         .chat-input-area {
             padding: 10px 16px 24px 16px;
@@ -740,14 +855,19 @@
             border-radius: 20px;
             display: flex;
             align-items: flex-end;
-            padding: 5px 6px 5px 14px;
+            padding: 5px 36px 5px 14px; /* padding right makes room for mic/send AND snap stopwatch */
             min-height: 36px;
             position: relative;
-            transition: background-color 0.3s ease, border-color 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .input-capsule:focus-within {
             border-color: var(--accent-color);
+        }
+
+        .input-capsule.snap-mode-active {
+            border-color: #ff9500 !important;
+            box-shadow: 0 0 0 3px rgba(255, 149, 0, 0.25);
         }
 
         .message-input {
@@ -757,7 +877,7 @@
             outline: none;
             color: var(--text-primary);
             font-size: 15px;
-            padding: 4px 28px 4px 0; /* padding right makes room for mic / send button */
+            padding: 4px 0;
             resize: none;
             max-height: 120px;
             line-height: 1.4;
@@ -768,11 +888,17 @@
             color: var(--text-secondary);
         }
 
-        /* Context Sensitive Mic/Send inside capsule */
-        .capsule-right-btn {
+        /* Buttons inside input capsule */
+        .capsule-right-container {
             position: absolute;
             right: 5px;
             bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .capsule-right-btn {
             width: 26px;
             height: 26px;
             border-radius: 50%;
@@ -786,6 +912,15 @@
             outline: none;
         }
 
+        .capsule-right-btn.snap-toggle {
+            color: var(--text-secondary);
+        }
+
+        .capsule-right-btn.snap-toggle.active {
+            color: #ff9500;
+            animation: bounce 0.4s;
+        }
+
         .capsule-right-btn.mic {
             color: var(--text-secondary);
         }
@@ -793,15 +928,20 @@
         .capsule-right-btn.send {
             background-color: var(--accent-color);
             color: #ffffff;
-            transform: scale(0);
-            opacity: 0;
-            pointer-events: none;
+            display: none;
+        }
+
+        .capsule-right-btn.send.sms-active {
+            background-color: var(--outgoing-bubble-sms-bg);
+        }
+
+        .capsule-right-btn.send.snap-active {
+            background: linear-gradient(135deg, #ff9500 0%, #ff5e00 100%);
         }
 
         .capsule-right-btn.send.active {
-            transform: scale(1);
-            opacity: 1;
-            pointer-events: auto;
+            display: flex;
+            animation: bounceIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .capsule-right-btn svg {
@@ -818,7 +958,8 @@
             fill: none;
         }
 
-        .capsule-right-btn.mic svg {
+        .capsule-right-btn.mic svg,
+        .capsule-right-btn.snap-toggle svg {
             stroke-width: 2;
         }
 
@@ -872,16 +1013,12 @@
             transform: scale(1.3);
         }
 
-        .tapback-option:active {
-            transform: scale(0.9);
-        }
-
         /* Details Sliding Pane */
         .details-pane {
             position: absolute;
-            right: -300px;
+            right: -320px;
             top: 0;
-            width: 300px;
+            width: 320px;
             height: 100%;
             background-color: var(--sidebar-bg);
             border-left: 1px solid var(--separator-color);
@@ -890,7 +1027,8 @@
             display: flex;
             flex-direction: column;
             padding: 75px 20px 20px 20px;
-            gap: 24px;
+            gap: 18px;
+            overflow-y: auto;
         }
 
         .details-pane.active {
@@ -903,6 +1041,7 @@
             align-items: center;
             gap: 8px;
             text-align: center;
+            margin-bottom: 8px;
         }
 
         .details-avatar {
@@ -916,6 +1055,14 @@
             font-weight: 600;
             color: #fff;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .details-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
         }
 
         .details-name {
@@ -923,12 +1070,24 @@
             font-weight: 600;
         }
 
+        .details-section-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            margin-left: 8px;
+        }
+
         .details-section {
-            background-color: var(--bg-color);
+            background-color: var(--panel-section-bg);
             border-radius: 12px;
             padding: 4px 0;
             box-shadow: 0 1px 3px rgba(0,0,0,0.03);
             border: 1px solid var(--separator-color);
+            display: flex;
+            flex-direction: column;
         }
 
         .details-row {
@@ -941,6 +1100,40 @@
 
         .details-row:last-child {
             border-bottom: none;
+        }
+
+        .details-row-input {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--separator-color);
+        }
+
+        .details-row-input:last-child {
+            border-bottom: none;
+        }
+
+        .details-row-input label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .details-row-input input[type="text"] {
+            border: 1px solid var(--separator-color);
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .details-row-input input[type="file"] {
+            font-size: 12px;
+            color: var(--text-secondary);
         }
 
         .details-label {
@@ -1055,8 +1248,8 @@
             border-radius: 18px;
             padding: 12px;
             display: none;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
             z-index: 15;
             animation: bounceIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -1072,11 +1265,12 @@
             align-items: center;
             gap: 6px;
             cursor: pointer;
+            width: 52px;
         }
 
         .expansion-icon-circle {
-            width: 44px;
-            height: 44px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -1093,12 +1287,14 @@
         .expansion-icon-circle.camera { background: linear-gradient(135deg, #a2a2a2, #636366); }
         .expansion-icon-circle.photos { background: linear-gradient(135deg, #007aff, #0056b3); }
         .expansion-icon-circle.audio { background: linear-gradient(135deg, #ff9500, #c67500); }
+        .expansion-icon-circle.location { background: linear-gradient(135deg, #34c759, #24b149); }
         .expansion-icon-circle.stickers { background: linear-gradient(135deg, #ff2d55, #c61a3d); }
 
         .expansion-label {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 500;
             color: var(--text-primary);
+            text-align: center;
         }
 
         /* Keyframes */
@@ -1112,7 +1308,27 @@
             to { opacity: 1; }
         }
 
-        /* Responsive Layout Breakpoints */
+        @keyframes radarPulse {
+            0% { transform: scale(0.6); opacity: 1; }
+            100% { transform: scale(1.6); opacity: 0; }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        @keyframes typingBounce {
+            0%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-6px); }
+        }
+
+        /* Responsive Layout */
         @media (max-width: 768px) {
             .back-btn {
                 display: flex;
@@ -1132,7 +1348,6 @@
                 display: none;
             }
 
-            /* Toggle views on mobile */
             .app-container.chat-active .sidebar {
                 display: none;
             }
@@ -1161,16 +1376,15 @@
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="sidebar-top">
-                    <button class="sidebar-action-btn" onclick="alert('iOS Edit Mode mock triggered.')">Edit</button>
+                    <button class="sidebar-action-btn" onclick="alert('iMessage Search/Edit.')">Edit</button>
                     <div class="sidebar-header-right">
-                        <!-- Dark/Light Theme Button -->
+                        <!-- Theme switch -->
                         <button class="theme-toggle-btn" id="theme-toggle-btn" title="Toggle Theme">
-                            <!-- Moon Icon -->
                             <svg id="theme-icon" viewBox="0 0 24 24">
                                 <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                             </svg>
                         </button>
-                        <!-- Logout Button -->
+                        <!-- Logout -->
                         <button class="sidebar-action-btn" onclick="window.location.href='/login'" style="color: #ff3b30;">Logout</button>
                     </div>
                 </div>
@@ -1186,13 +1400,13 @@
                 <input type="text" class="search-bar" id="search-bar" placeholder="Search" oninput="filterConversations()">
             </div>
 
-            <!-- Thread List -->
+            <!-- Conversation threads -->
             <div class="conversation-list" id="conversation-list">
-                <!-- Injected by JS -->
+                <!-- Populated by JS -->
             </div>
         </div>
 
-        <!-- Right Pane: Active Chat Area -->
+        <!-- Right Pane: Active Chat Window -->
         <div class="chat-window" id="chat-window">
             
             <!-- Header -->
@@ -1207,9 +1421,9 @@
                 </div>
                 
                 <div class="header-center" id="header-details-trigger">
-                    <div class="header-avatar" id="active-header-avatar">G</div>
+                    <div class="header-avatar" id="active-header-avatar"></div>
                     <div class="header-name" id="active-header-name">
-                        <span>Global iMessage Room</span>
+                        <span>Friend</span>
                         <svg viewBox="0 0 24 24" style="width: 10px; height: 10px; fill: currentColor;"><path d="M7 10l5 5 5-5z"/></svg>
                     </div>
                     <div class="header-subtitle" id="active-header-subtitle">iMessage</div>
@@ -1226,12 +1440,12 @@
                 </div>
             </div>
 
-            <!-- Messages Box -->
+            <!-- Messages Area -->
             <div class="messages-container" id="messages-container">
-                <!-- Injected by JS -->
+                <!-- Populated by JS -->
             </div>
 
-            <!-- Typing Indicator Bubble -->
+            <!-- Bouncing dots typing indicator -->
             <div class="typing-indicator-container" id="typing-indicator">
                 <div class="typing-bubble">
                     <div class="typing-dot"></div>
@@ -1240,35 +1454,45 @@
                 </div>
             </div>
 
-            <!-- App Plus Menu -->
+            <!-- Expansion Plus Panel -->
             <div class="plus-expansion-panel" id="plus-panel">
                 <div class="expansion-item" onclick="sendActionMock('Camera')">
                     <div class="expansion-icon-circle camera">
-                        <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" fill="none" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
                     </div>
                     <div class="expansion-label">Camera</div>
                 </div>
                 <div class="expansion-item" onclick="sendActionMock('Photos')">
                     <div class="expansion-icon-circle photos">
-                        <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" fill="none" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
                     </div>
                     <div class="expansion-label">Photos</div>
                 </div>
                 <div class="expansion-item" onclick="sendActionMock('Audio')">
                     <div class="expansion-icon-circle audio">
-                        <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" fill="none" stroke-width="2"><path d="M12 1v22M17 5v14M22 9v6M7 5v14M2 9v6"></path></svg>
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2"><path d="M12 1v22M17 5v14M22 9v6M7 5v14M2 9v6"></path></svg>
                     </div>
                     <div class="expansion-label">Audio</div>
                 </div>
+                <div class="expansion-item" onclick="shareLocation()">
+                    <div class="expansion-icon-circle location">
+                        <!-- Pin Icon -->
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                    </div>
+                    <div class="expansion-label">Location</div>
+                </div>
                 <div class="expansion-item" onclick="sendActionMock('Stickers')">
                     <div class="expansion-icon-circle stickers">
-                        <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"></path></svg>
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"></path></svg>
                     </div>
                     <div class="expansion-label">Stickers</div>
                 </div>
             </div>
 
-            <!-- Input Capsule Area -->
+            <!-- Input capsule area -->
             <div class="chat-input-area">
                 <button class="input-action-btn" id="plus-btn" title="Add attachment">
                     <svg viewBox="0 0 24 24">
@@ -1277,38 +1501,74 @@
                     </svg>
                 </button>
                 
-                <div class="input-capsule">
+                <div class="input-capsule" id="input-capsule">
                     <input type="text" class="message-input" id="message-input" placeholder="iMessage" onkeydown="handleInputKey(event)" oninput="toggleInputSendBtn()">
                     
-                    <!-- Microphone / Audio Icon -->
-                    <button class="capsule-right-btn mic" id="mic-btn" onclick="sendActionMock('Voice Memo')">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
-                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                            <line x1="12" y1="19" x2="12" y2="23"></line>
-                            <line x1="8" y1="23" x2="16" y2="23"></line>
-                        </svg>
-                    </button>
-                    
-                    <!-- iOS send button circle blue arrow -->
-                    <button class="capsule-right-btn send" id="send-btn" onclick="sendMessage()">
-                        <svg viewBox="0 0 24 24">
-                            <line x1="12" y1="19" x2="12" y2="5"></line>
-                            <polyline points="5 12 12 5 19 12"></polyline>
-                        </svg>
-                    </button>
+                    <div class="capsule-right-container">
+                        <!-- Snap toggle button stopwatch -->
+                        <button class="capsule-right-btn snap-toggle" id="snap-toggle-btn" onclick="toggleSnapMode()" title="Toggle 10s Snap Mode">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                        </button>
+                        
+                        <!-- Microphone icon -->
+                        <button class="capsule-right-btn mic" id="mic-btn" onclick="sendActionMock('Voice Memo')">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                                <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                                <line x1="12" y1="19" x2="12" y2="23"></line>
+                                <line x1="8" y1="23" x2="16" y2="23"></line>
+                            </svg>
+                        </button>
+                        
+                        <!-- Send arrow -->
+                        <button class="capsule-right-btn send" id="send-btn" onclick="sendMessage()">
+                            <svg viewBox="0 0 24 24">
+                                <line x1="12" y1="19" x2="12" y2="5"></line>
+                                <polyline points="5 12 12 5 19 12"></polyline>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            <!-- Details Slide-out Pane -->
+            <!-- Details Sliding Panel -->
             <div class="details-pane" id="details-pane">
                 <button class="close-details-btn" id="close-details-btn">Done</button>
                 
                 <div class="details-header">
-                    <div class="details-avatar" id="details-avatar">G</div>
-                    <div class="details-name" id="details-name">Global Room</div>
+                    <div class="details-avatar" id="details-avatar"></div>
+                    <div class="details-name" id="details-name">Friend</div>
                 </div>
 
+                <!-- Personalization (Upload avatars & change names) -->
+                <div class="details-section-title">My Profile</div>
+                <div class="details-section">
+                    <div class="details-row-input">
+                        <label for="edit-my-name">My Display Name</label>
+                        <input type="text" id="edit-my-name" placeholder="Me" oninput="updateMyName(this.value)">
+                    </div>
+                    <div class="details-row-input">
+                        <label>My Profile Picture</label>
+                        <input type="file" accept="image/*" onchange="uploadProfilePic(this, 'me')">
+                    </div>
+                </div>
+
+                <div class="details-section-title">Friend's Profile</div>
+                <div class="details-section">
+                    <div class="details-row-input">
+                        <label for="edit-friend-name">Friend's Name</label>
+                        <input type="text" id="edit-friend-name" placeholder="Friend" oninput="updateFriendName(this.value)">
+                    </div>
+                    <div class="details-row-input">
+                        <label>Friend's Profile Picture</label>
+                        <input type="file" accept="image/*" onchange="uploadProfilePic(this, 'friend')">
+                    </div>
+                </div>
+
+                <div class="details-section-title">Settings</div>
                 <div class="details-section">
                     <div class="details-row">
                         <span class="details-label">Send as SMS (Green)</span>
@@ -1327,11 +1587,11 @@
                 </div>
 
                 <div class="details-section">
-                    <button class="details-btn" onclick="clearThreadLocalStorage()">Clear Conversation Caching</button>
+                    <button class="details-btn" onclick="clearThreadLocalStorage()">Clear Caching</button>
                 </div>
             </div>
 
-            <!-- Tapback Overlay and Menu -->
+            <!-- Tapback overlay -->
             <div class="tapback-overlay" id="tapback-overlay" onclick="closeTapbackMenu()">
                 <div class="tapback-menu" id="tapback-menu">
                     <span class="tapback-option" onclick="handleTapbackSelect('❤️')">❤️</span>
@@ -1348,25 +1608,27 @@
 
     <script>
         const currentUser = "{{ current_user }}";
+        // Calculate friend key
+        const friendId = (currentUser === 'xfnkl52') ? 'sankjj' : 'xfnkl52';
         
-        // Dynamic state mapping
-        let activeThreadId = 'global'; // default
+        let activeThreadId = 'friend'; // default is the direct friend DM thread
         let isSMSEnabled = false;
         let isAudioEnabled = true;
+        let isSnapMode = false;
+        
         let globalMessages = [];
         let pollingInterval = null;
 
-        // Mock threads data structures
+        // Configuration structures
         const threads = {
-            'global': {
-                id: 'global',
-                name: 'Global iMessage Room',
-                subtitle: 'Group Room',
-                isGroup: true,
-                avatarText: 'G',
-                avatarBg: 'linear-gradient(135deg, #007aff, #8e8e93)',
-                lastMessage: 'Loading messages...',
-                lastTime: '',
+            'friend': {
+                id: 'friend',
+                name: getFriendName(),
+                subtitle: 'Direct Message',
+                isGroup: false,
+                avatarBg: 'linear-gradient(135deg, #007aff, #0056b3)',
+                lastMessage: 'Messages synced with Supabase',
+                lastTime: 'Now',
                 unread: false
             },
             'craig': {
@@ -1374,11 +1636,10 @@
                 name: 'Craig Federighi',
                 subtitle: 'Apple Software',
                 isGroup: false,
-                avatarText: 'CF',
                 avatarBg: 'linear-gradient(135deg, #a284ff, #733cff)',
                 lastMessage: 'Good morning! Welcome to macOS Sequoia.',
                 lastTime: '10:42 AM',
-                unread: true,
+                unread: false,
                 messages: [
                     { sender: 'Craig Federighi', text: 'Hey there! How is the new iMessage clone looking?' },
                     { sender: 'Craig Federighi', text: 'We designed this typography and gradients to be absolutely buttery smooth. Let me know if you want to push Hair Force One to the limits!' }
@@ -1389,34 +1650,50 @@
                 name: 'Apple Support',
                 subtitle: 'Official Help',
                 isGroup: false,
-                avatarText: '',
                 avatarBg: 'linear-gradient(135deg, #3a3a3c, #1c1c1e)',
                 lastMessage: 'Welcome to iMessage! View guide here.',
                 lastTime: 'Yesterday',
                 unread: false,
                 messages: [
                     { sender: 'Apple Support', text: ' Welcome to the Apple iMessage Web Redesign!' },
-                    { sender: 'Apple Support', text: 'Here are the premium features you can test:\n1. Switch to Craig Federighi to converse with an interactive Apple chatbot.\n2. Double-click any chat bubble to activate iOS Tapback Reactions.\n3. Click the recipient header to toggle green SMS messages vs blue iMessage bubbles.\n4. Click the "+" button in the keyboard to mock iOS camera/photos utilities.\n5. Adjust Light and Dark themes directly in the sidebar.' }
-                ]
-            },
-            'tim': {
-                id: 'tim',
-                name: 'Tim Cook',
-                subtitle: 'Apple CEO',
-                isGroup: false,
-                avatarText: 'TC',
-                avatarBg: 'linear-gradient(135deg, #5e5e6e, #2c2c2e)',
-                lastMessage: 'Good morning! Have a wonderful launch day.',
-                lastTime: 'Friday',
-                unread: false,
-                messages: [
-                    { sender: 'Tim Cook', text: 'Good morning! I wanted to check in on the developer app.' },
-                    { sender: 'Tim Cook', text: 'Our team is incredibly impressed by the micro-animations and sound synthesis you implemented. This is a profound advancement.' },
-                    { sender: 'user1', text: 'Thank you Tim! We are polishing the final builds now.' },
-                    { sender: 'Tim Cook', text: 'Outstanding. Keep pushing boundaries. Have a wonderful launch day!' }
+                    { sender: 'Apple Support', text: 'Here are the premium features you can test:\n1. Switch to Craig Federighi to converse with an interactive Apple chatbot.\n2. Double-click any chat bubble to activate iOS Tapback Reactions.\n3. Click the recipient header to toggle green SMS messages vs blue iMessage bubbles.\n4. Enable "Snap Mode" (stopwatch icon) to send a self-destructing 10s message.\n5. Click the "+" button and select Location to share your live Geolocation coordinates.\n6. Adjust Light and Dark themes, change display names, and upload profile pictures in details.' }
                 ]
             }
         };
+
+        // Personalization Getters / Setters
+        function getFriendName() {
+            return localStorage.getItem(`display_name_${friendId}`) || friendId;
+        }
+
+        function getMyName() {
+            return localStorage.getItem(`display_name_${currentUser}`) || currentUser;
+        }
+
+        function getAvatarHtml(userId, size = 48) {
+            const pic = localStorage.getItem(`profile_pic_${userId}`);
+            if (pic) {
+                return `<img src="${pic}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
+            }
+            
+            // Generate initials
+            const name = localStorage.getItem(`display_name_${userId}`) || userId;
+            const initials = name.substring(0, 2).toUpperCase();
+            
+            // Custom colors based on username strings
+            let bg = 'linear-gradient(135deg, #8e8e93, #636366)';
+            if (userId === 'xfnkl52') {
+                bg = 'linear-gradient(135deg, #007aff, #0056b3)';
+            } else if (userId === 'sankjj') {
+                bg = 'linear-gradient(135deg, #34c759, #24b149)';
+            } else if (userId === 'craig') {
+                bg = 'linear-gradient(135deg, #a284ff, #733cff)';
+            } else if (userId === 'support') {
+                bg = 'linear-gradient(135deg, #3a3a3c, #1c1c1e)';
+            }
+            
+            return `<div style="background: ${bg}; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight:600; font-size:${size * 0.38}px">${initials}</div>`;
+        }
 
         // Web Audio Synthesized Sounds
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1430,7 +1707,6 @@
             const now = audioCtx.currentTime;
             
             if (type === 'send') {
-                // Synthesize iMessage Swoosh
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 
@@ -1447,7 +1723,6 @@
                 osc.start(now);
                 osc.stop(now + 0.35);
             } else if (type === 'receive') {
-                // Synthesize iMessage Chime: Chord of E6 and B5
                 const osc1 = audioCtx.createOscillator();
                 const osc2 = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
@@ -1455,9 +1730,9 @@
                 osc1.type = 'sine';
                 osc2.type = 'sine';
                 
-                osc1.frequency.setValueAtTime(987.77, now); // B5
+                osc1.frequency.setValueAtTime(987.77, now);
                 osc1.frequency.setValueAtTime(987.77, now + 0.05);
-                osc2.frequency.setValueAtTime(1318.51, now + 0.05); // E6
+                osc2.frequency.setValueAtTime(1318.51, now + 0.05);
                 
                 gain.gain.setValueAtTime(0.08, now);
                 gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
@@ -1473,15 +1748,27 @@
             }
         }
 
-        // Initialize App
+        // Request browser permissions
+        function requestNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+        }
+
+        // Initialize
         window.addEventListener('DOMContentLoaded', () => {
-            // Load state from localStorage
+            requestNotificationPermission();
             loadThemeSetting();
             loadConversationsCache();
+            
+            // Set input fields in details
+            document.getElementById('edit-my-name').value = getMyName();
+            document.getElementById('edit-friend-name').value = getFriendName();
+            
             renderSidebarConversations();
-            selectConversation('global');
+            selectConversation('friend');
 
-            // Setup Details pane triggers
+            // Listeners
             document.getElementById('info-btn').addEventListener('click', toggleDetailsPane);
             document.getElementById('header-details-trigger').addEventListener('click', toggleDetailsPane);
             document.getElementById('close-details-btn').addEventListener('click', () => {
@@ -1503,11 +1790,11 @@
             document.getElementById('sms-toggle').checked = isSMSEnabled;
             document.getElementById('audio-toggle').checked = isAudioEnabled;
 
-            // Setup polling for live Global Room messages
-            pollingInterval = setInterval(fetchGlobalMessages, 2500);
+            // Setup polling for direct Supabase friend messages
+            pollingInterval = setInterval(fetchFriendMessages, 2500);
         });
 
-        // Theme Toggle Settings (System default support + manual switch)
+        // Theme controllers
         function loadThemeSetting() {
             const savedTheme = localStorage.getItem('imessage-theme');
             if (savedTheme === 'dark') {
@@ -1517,7 +1804,6 @@
                 document.body.classList.remove('dark');
                 updateThemeIcon(false);
             } else {
-                // system default
                 const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
                 if (prefersDark) {
                     document.body.classList.add('dark');
@@ -1536,15 +1822,72 @@
         function updateThemeIcon(isDark) {
             const iconSvg = document.getElementById('theme-icon');
             if (isDark) {
-                // Render Sun Icon in Dark Mode
                 iconSvg.innerHTML = `<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>`;
             } else {
-                // Render Moon Icon in Light Mode
                 iconSvg.innerHTML = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>`;
             }
         }
 
-        // Render Sidebar lists
+        // Personalization Updates
+        function updateMyName(val) {
+            const clean = val.trim();
+            if (!clean) return;
+            localStorage.setItem(`display_name_${currentUser}`, clean);
+            updateUI();
+        }
+
+        function updateFriendName(val) {
+            const clean = val.trim();
+            if (!clean) return;
+            localStorage.setItem(`display_name_${friendId}`, clean);
+            threads['friend'].name = clean;
+            updateUI();
+        }
+
+        function uploadProfilePic(input, target) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64Data = e.target.result;
+                const userId = (target === 'me') ? currentUser : friendId;
+                localStorage.setItem(`profile_pic_${userId}`, base64Data);
+                updateUI();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Global UI Sync updates
+        function updateUI() {
+            renderSidebarConversations();
+            
+            const headerAvatar = document.getElementById('active-header-avatar');
+            const headerNameEl = document.getElementById('active-header-name');
+            const detailsAvatar = document.getElementById('details-avatar');
+            const detailsName = document.getElementById('details-name');
+
+            if (activeThreadId === 'friend') {
+                headerAvatar.innerHTML = getAvatarHtml(friendId, 34);
+                headerNameEl.querySelector('span').textContent = getFriendName();
+                
+                detailsAvatar.innerHTML = getAvatarHtml(friendId, 70);
+                detailsName.textContent = getFriendName();
+                
+                renderFriendMessages();
+            } else {
+                const activeThread = threads[activeThreadId];
+                headerAvatar.innerHTML = getAvatarHtml(activeThreadId, 34);
+                headerNameEl.querySelector('span').textContent = activeThread.name;
+                
+                detailsAvatar.innerHTML = getAvatarHtml(activeThreadId, 70);
+                detailsName.textContent = activeThread.name;
+                
+                renderChatHistory();
+            }
+        }
+
+        // Sidebar render
         function renderSidebarConversations() {
             const container = document.getElementById('conversation-list');
             container.innerHTML = '';
@@ -1555,24 +1898,16 @@
                 item.id = `conv-${thread.id}`;
                 item.setAttribute('onclick', `selectConversation('${thread.id}')`);
 
-                let avatarHtml = '';
-                if (thread.isGroup) {
-                    avatarHtml = `
-                        <div class="avatar group">
-                            <div class="avatar-sub avatar-sub-1">${currentUser.substring(0,2).toUpperCase()}</div>
-                            <div class="avatar-sub avatar-sub-2">U2</div>
-                        </div>
-                    `;
-                } else {
-                    avatarHtml = `<div class="avatar" style="background: ${thread.avatarBg}">${thread.avatarText}</div>`;
-                }
+                const targetId = (thread.id === 'friend') ? friendId : thread.id;
+                const avatarHtml = `<div class="avatar">${getAvatarHtml(targetId, 48)}</div>`;
+                const displayTitle = (thread.id === 'friend') ? getFriendName() : thread.name;
 
                 item.innerHTML = `
                     <div class="unread-dot"></div>
                     ${avatarHtml}
                     <div class="conversation-info">
                         <div class="conversation-meta">
-                            <div class="conversation-name">${thread.name}</div>
+                            <div class="conversation-name">${displayTitle}</div>
                             <div class="conversation-time">${thread.lastTime}</div>
                         </div>
                         <div class="conversation-preview" id="preview-${thread.id}">${thread.lastMessage}</div>
@@ -1582,12 +1917,12 @@
             });
         }
 
-        // Search filtering logic
         function filterConversations() {
             const query = document.getElementById('search-bar').value.toLowerCase();
             Object.values(threads).forEach(thread => {
                 const element = document.getElementById(`conv-${thread.id}`);
-                const matches = thread.name.toLowerCase().includes(query) || thread.lastMessage.toLowerCase().includes(query);
+                const title = (thread.id === 'friend') ? getFriendName() : thread.name;
+                const matches = title.toLowerCase().includes(query) || thread.lastMessage.toLowerCase().includes(query);
                 if (element) {
                     element.style.display = matches ? 'flex' : 'none';
                 }
@@ -1599,116 +1934,105 @@
             activeThreadId = id;
             threads[id].unread = false;
             
-            // UI elements update
-            renderSidebarConversations();
-            
-            // Mobile layout shift
             document.getElementById('app-container').classList.add('chat-active');
             
-            // Render Header Details
-            const activeThread = threads[id];
-            const headerAvatar = document.getElementById('active-header-avatar');
-            const headerNameEl = document.getElementById('active-header-name');
             const headerSubtitleEl = document.getElementById('active-header-subtitle');
             
-            // Sync details panel
-            document.getElementById('details-name').textContent = activeThread.name;
-            const detailsAvatar = document.getElementById('details-avatar');
-            
-            if (activeThread.isGroup) {
-                headerAvatar.textContent = '';
-                headerAvatar.className = 'header-avatar group';
-                headerAvatar.style.background = 'transparent';
-                headerAvatar.innerHTML = `
-                    <div class="avatar-sub avatar-sub-1" style="width: 22px; height: 22px; font-size: 8px; top: 0px; left: 0px; border: 1.5px solid var(--bg-color)">${currentUser.substring(0,2).toUpperCase()}</div>
-                    <div class="avatar-sub avatar-sub-2" style="width: 22px; height: 22px; font-size: 8px; bottom: 0px; right: 0px; border: 1.5px solid var(--bg-color)">U2</div>
-                `;
-                
-                detailsAvatar.className = 'details-avatar group';
-                detailsAvatar.innerHTML = headerAvatar.innerHTML;
-                detailsAvatar.style.background = 'transparent';
-            } else {
-                headerAvatar.innerHTML = activeThread.avatarText;
-                headerAvatar.className = 'header-avatar';
-                headerAvatar.style.background = activeThread.avatarBg;
-                
-                detailsAvatar.innerHTML = activeThread.avatarText;
-                detailsAvatar.className = 'details-avatar';
-                detailsAvatar.style.background = activeThread.avatarBg;
-            }
-
-            headerNameEl.querySelector('span').textContent = activeThread.name;
-            
-            if (id === 'global') {
-                headerSubtitleEl.textContent = 'iMessage Group';
-                fetchGlobalMessages();
-            } else {
+            if (id === 'friend') {
                 headerSubtitleEl.textContent = isSMSEnabled ? 'Text Message (SMS)' : 'iMessage';
+                fetchFriendMessages();
+            } else {
+                headerSubtitleEl.textContent = 'iMessage';
                 renderChatHistory();
             }
             
-            // Set message input placeholder context
             const input = document.getElementById('message-input');
             input.placeholder = isSMSEnabled ? 'Text Message' : 'iMessage';
             
-            // Close details if changing thread
+            // Reset snap mode on change
+            isSnapMode = false;
+            document.getElementById('input-capsule').classList.remove('snap-mode-active');
+            document.getElementById('snap-toggle-btn').classList.remove('active');
+            
+            updateUI();
+            
+            // Close details
             document.getElementById('details-pane').classList.remove('active');
             
-            // Scroll to bottom
             const container = document.getElementById('messages-container');
             container.scrollTop = container.scrollHeight;
         }
 
-        // Toggle Details Slide Panel
         function toggleDetailsPane() {
             document.getElementById('details-pane').classList.toggle('active');
         }
 
-        // SMS Toggle settings
         function toggleSMSType() {
             isSMSEnabled = document.getElementById('sms-toggle').checked;
             const headerSubtitleEl = document.getElementById('active-header-subtitle');
             const input = document.getElementById('message-input');
             
-            if (activeThreadId !== 'global') {
+            if (activeThreadId === 'friend') {
                 headerSubtitleEl.textContent = isSMSEnabled ? 'Text Message (SMS)' : 'iMessage';
             }
             input.placeholder = isSMSEnabled ? 'Text Message' : 'iMessage';
             
-            renderChatHistory();
+            // Refresh send button visual
+            const sendBtn = document.getElementById('send-btn');
+            if (isSMSEnabled) {
+                sendBtn.classList.add('sms-active');
+            } else {
+                sendBtn.classList.remove('sms-active');
+            }
+            
+            updateUI();
         }
 
-        // Audio toggle setting
-        const audioToggle = document.getElementById('audio-toggle');
-        audioToggle.addEventListener('change', () => {
-            isAudioEnabled = audioToggle.checked;
-        });
+        function toggleSnapMode() {
+            isSnapMode = !isSnapMode;
+            
+            const capsule = document.getElementById('input-capsule');
+            const toggleBtn = document.getElementById('snap-toggle-btn');
+            const sendBtn = document.getElementById('send-btn');
+            const input = document.getElementById('message-input');
+            
+            if (isSnapMode) {
+                capsule.classList.add('snap-mode-active');
+                toggleBtn.classList.add('active');
+                sendBtn.classList.add('snap-active');
+                input.placeholder = 'Send a 10s Snap...';
+                playSound('send');
+            } else {
+                capsule.classList.remove('snap-mode-active');
+                toggleBtn.classList.remove('active');
+                sendBtn.classList.remove('snap-active');
+                input.placeholder = isSMSEnabled ? 'Text Message' : 'iMessage';
+            }
+        }
 
-        // Mobile exit action
         function exitChatMobile() {
             document.getElementById('app-container').classList.remove('chat-active');
         }
 
-        // Local Storage conversations persistence
+        // Local Storage Caching
         function saveConversationsCache() {
             const cacheData = {};
             Object.keys(threads).forEach(key => {
-                if (key !== 'global') {
+                if (key !== 'friend') {
                     cacheData[key] = threads[key].messages;
                 }
             });
-            localStorage.setItem('imessage_thread_history', JSON.stringify(cacheData));
+            localStorage.setItem('imessage_thread_history_v2', JSON.stringify(cacheData));
         }
 
         function loadConversationsCache() {
-            const raw = localStorage.getItem('imessage_thread_history');
+            const raw = localStorage.getItem('imessage_thread_history_v2');
             if (raw) {
                 try {
                     const parsed = JSON.parse(raw);
                     Object.keys(parsed).forEach(key => {
                         if (threads[key]) {
                             threads[key].messages = parsed[key];
-                            // Update last message preview
                             if (parsed[key].length > 0) {
                                 const lastM = parsed[key][parsed[key].length - 1];
                                 threads[key].lastMessage = lastM.text;
@@ -1717,14 +2041,21 @@
                         }
                     });
                 } catch(e) {
-                    console.error("Error parsing cache", e);
+                    console.error(e);
                 }
             }
         }
 
         function clearThreadLocalStorage() {
-            if (confirm("Are you sure you want to clear this thread's cache?")) {
-                if (activeThreadId !== 'global') {
+            if (confirm("Clear local conversation caching and expired Snaps?")) {
+                // Clear all expired snaps keys
+                Object.keys(localStorage).forEach(key => {
+                    if (key.startsWith('expired_')) {
+                        localStorage.removeItem(key);
+                    }
+                });
+                
+                if (activeThreadId !== 'friend') {
                     threads[activeThreadId].messages = [
                         { sender: 'System', text: 'Chat history cleared locally.' }
                     ];
@@ -1733,12 +2064,13 @@
                     renderSidebarConversations();
                     renderChatHistory();
                 } else {
-                    alert("Global chat room relies on Supabase and cannot be wiped locally.");
+                    alert("Local caching and Snap statuses wiped. Database sync refreshed.");
+                    fetchFriendMessages();
                 }
             }
         }
 
-        // Renders non-global chat histories (Craig, Support, Tim Cook)
+        // Render non-friend mockup history
         function renderChatHistory() {
             const container = document.getElementById('messages-container');
             container.innerHTML = '';
@@ -1749,7 +2081,6 @@
             const messages = thread.messages;
 
             messages.forEach((msg, i) => {
-                // Date separator mockup
                 if (i === 0) {
                     const div = document.createElement('div');
                     div.className = 'date-divider';
@@ -1757,31 +2088,19 @@
                     container.appendChild(div);
                 }
 
-                // Clustering variables
                 const isFirst = (i === 0) || (messages[i-1].sender !== msg.sender);
                 const isLast = (i === messages.length - 1) || (messages[i+1].sender !== msg.sender);
                 const isOutgoing = (msg.sender === currentUser || msg.sender === 'user1' || msg.sender === 'user2');
 
                 const row = document.createElement('div');
-                row.className = `message-row ${isOutgoing ? 'outgoing' : 'incoming'} ${isSMSEnabled ? 'sms' : ''}`;
+                row.className = `message-row ${isOutgoing ? 'outgoing' : 'incoming'}`;
                 row.style.marginTop = isFirst ? '12px' : '2px';
 
-                // Unique ID for reactions keying
                 const msgKey = `reaction_${activeThreadId}_${i}`;
                 const savedReaction = localStorage.getItem(msgKey);
 
-                // Construct avatar initials for incoming cluster
-                let bubbleHtml = '';
-                
-                // Set sender display label on incoming group chat or first item in group
-                let senderLabel = '';
-                if (!isOutgoing && isFirst && activeThreadId === 'global') {
-                    senderLabel = `<span class="message-sender-label">${msg.sender}</span>`;
-                }
-
-                bubbleHtml += `
+                row.innerHTML = `
                     <div class="message-bubble-wrapper">
-                        ${senderLabel}
                         <div class="message-bubble ${isLast ? 'last' : ''}" 
                              ondblclick="openTapbackMenu(event, '${msgKey}', ${isOutgoing})">
                             ${formatMessageText(msg.text)}
@@ -1790,10 +2109,8 @@
                     </div>
                 `;
 
-                row.innerHTML = bubbleHtml;
                 container.appendChild(row);
 
-                // Add receipt status below last outgoing message
                 if (isOutgoing && i === messages.length - 1) {
                     const receipt = document.createElement('div');
                     receipt.className = 'status-receipt';
@@ -1805,72 +2122,170 @@
             container.scrollTop = container.scrollHeight;
         }
 
-        // Formats links & linebreaks in message text safely
+        // Parses and compiles rich content like location, snaps, or plain text
+        function parseMessageBubbleHTML(text, msgKey, isLast, isOutgoing) {
+            // Case 1: Geolocation card
+            if (text.startsWith('[LOCATION]')) {
+                const coords = text.replace('[LOCATION]', '').trim().split(',');
+                const lat = parseFloat(coords[0]);
+                const lng = parseFloat(coords[1]);
+                if (isNaN(lat) || isNaN(lng)) return `<div class="message-bubble ${isLast ? 'last' : ''}">📍 Coordinates parsed error</div>`;
+                
+                return `
+                    <div class="map-card" onclick="window.open('https://www.google.com/maps?q=${lat},${lng}', '_blank')">
+                        <div class="map-grid-bg">
+                            <div class="map-radar"></div>
+                            <div class="map-pin">📍</div>
+                        </div>
+                        <div class="map-info">
+                            <span class="map-title">Shared Location</span>
+                            <span class="map-coords">${lat.toFixed(5)}°, ${lng.toFixed(5)}°</span>
+                            <button class="map-btn">Open in Maps</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Case 2: Self-destructing Snap
+            if (text.startsWith('[SNAP]')) {
+                const actualText = text.replace('[SNAP]', '').trim();
+                const expiredKey = `expired_${msgKey}`;
+                const isExpired = localStorage.getItem(expiredKey) === 'true';
+                
+                if (isExpired) {
+                    return `<div class="snap-expired-bubble">⚠️ Snap Expired</div>`;
+                } else {
+                    // Safe encoding using base64 for inline params
+                    const safeEnc = btoa(encodeURIComponent(actualText));
+                    return `
+                        <div class="snap-locked-bubble" id="snap-locked-${msgKey}" onclick="revealSnap('${msgKey}', '${safeEnc}')">
+                            <span>📷 Snap (Click to view)</span>
+                        </div>
+                    `;
+                }
+            }
+
+            // Case 3: Standard text bubble
+            return `
+                <div class="message-bubble ${isLast ? 'last' : ''}" 
+                     ondblclick="openTapbackMenu(event, '${msgKey}', ${isOutgoing})">
+                    ${formatMessageText(text)}
+                </div>
+            `;
+        }
+
+        // Handle snap open countdown timer
+        function revealSnap(msgKey, encodedText) {
+            const bubble = document.getElementById(`snap-locked-${msgKey}`);
+            if (!bubble) return;
+            
+            const decodedText = decodeURIComponent(atob(encodedText));
+            
+            bubble.className = "message-bubble snap-revealed";
+            bubble.onclick = null; // deactivate click listener
+            
+            let secondsLeft = 10;
+            bubble.innerHTML = `
+                <div class="snap-content-wrapper">
+                    <div class="snap-text">${formatMessageText(decodedText)}</div>
+                    <div class="snap-timer" id="timer-${msgKey}">10s</div>
+                </div>
+            `;
+            
+            playSound('receive');
+            
+            const timerInterval = setInterval(() => {
+                secondsLeft--;
+                const timerEl = document.getElementById(`timer-${msgKey}`);
+                if (timerEl) {
+                    timerEl.textContent = `${secondsLeft}s`;
+                }
+                
+                if (secondsLeft <= 0) {
+                    clearInterval(timerInterval);
+                    // Mark as expired
+                    localStorage.setItem(`expired_${msgKey}`, 'true');
+                    bubble.className = "snap-expired-bubble";
+                    bubble.innerHTML = "⚠️ Snap Expired";
+                    
+                    // Re-render chat
+                    if (activeThreadId === 'friend') {
+                        renderFriendMessages();
+                    } else {
+                        renderChatHistory();
+                    }
+                }
+            }, 1000);
+        }
+
+        // Format raw text safely
         function formatMessageText(text) {
             if (!text) return '';
-            // Escape html
             let clean = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-            // Replace newlines
             return clean.replace(/\n/g, '<br>');
         }
 
-        // Fetch Global Supabase Messages
-        async function fetchGlobalMessages() {
-            if (activeThreadId !== 'global') return;
+        // Fetch direct friend messages
+        async function fetchFriendMessages() {
+            if (activeThreadId !== 'friend') return;
 
             try {
                 const response = await fetch('/messages?t=' + new Date().getTime());
-                
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    document.getElementById('messages-container').innerHTML = `<div style="color: red; padding: 10px;">Server Error ${response.status}: Vercel or Supabase failed.</div>`;
-                    return;
-                }
+                if (!response.ok) return;
 
                 const messages = await response.json();
-                
-                if (messages.error) {
-                    document.getElementById('messages-container').innerHTML = `<div style="color: orange; padding: 10px;">Session Error: ${messages.error}</div>`;
-                    return; 
-                }
+                if (messages.error) return;
 
-                // Check if new message count increased (play sound check)
+                // Sync check for push notification triggers
                 const playChime = globalMessages.length > 0 && messages.length > globalMessages.length;
-                
-                const hasLastIncomingNew = playChime && (messages[messages.length - 1].sender !== currentUser);
+                const lastMsg = messages[messages.length - 1];
+                const hasNewIncoming = playChime && (lastMsg.sender !== currentUser);
 
                 globalMessages = messages;
                 
-                // Update sidebar preview
+                // Sync sidebar preview
                 if (messages.length > 0) {
-                    const lastM = messages[messages.length - 1];
-                    threads['global'].lastMessage = `${lastM.sender}: ${lastM.text}`;
-                    threads['global'].lastTime = 'Just Now';
-                    document.getElementById('preview-global').textContent = threads['global'].lastMessage;
+                    let preview = lastMsg.text;
+                    if (preview.startsWith('[SNAP]')) preview = '📷 Sent a Snap';
+                    else if (preview.startsWith('[LOCATION]')) preview = '📍 Shared Location';
+                    
+                    threads['friend'].lastMessage = preview;
+                    threads['friend'].lastTime = 'Just Now';
+                    document.getElementById('preview-friend').textContent = preview;
                 }
 
-                renderGlobalMessages();
+                renderFriendMessages();
 
-                if (hasLastIncomingNew) {
+                if (hasNewIncoming) {
                     playSound('receive');
+                    
+                    // Browser notification fire
+                    if ('Notification' in window && Notification.permission === 'granted' && document.hidden) {
+                        let notifyBody = lastMsg.text;
+                        if (notifyBody.startsWith('[SNAP]')) notifyBody = 'Sent a 10s Snap';
+                        else if (notifyBody.startsWith('[LOCATION]')) notifyBody = 'Shared location details';
+                        
+                        new Notification(getFriendName(), {
+                            body: notifyBody,
+                            icon: localStorage.getItem(`profile_pic_${friendId}`) || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"%3E%3Ccircle cx="12" cy="12" r="10" fill="%23007aff"/%3E%3C/svg%3E'
+                        });
+                    }
                 }
                 
             } catch (err) {
-                document.getElementById('messages-container').innerHTML = `<div style="color: red; padding: 10px;">Network Connection Error: ${err.message}</div>`;
+                console.error(err);
             }
         }
 
-        // Renders Global Room history from fetched DB array
-        function renderGlobalMessages() {
+        // Render friend direct messages
+        function renderFriendMessages() {
             const container = document.getElementById('messages-container');
-            
-            // Remember scroll position
             const isScrolledToBottom = container.scrollHeight - container.clientHeight <= container.scrollTop + 50;
 
             container.innerHTML = '';
             
             if (globalMessages.length === 0) {
-                container.innerHTML = '<div style="color: gray; font-style: italic; text-align: center; margin-top: 40px;">No messages in this chat room yet.</div>';
+                container.innerHTML = `<div style="color: gray; font-style: italic; text-align: center; margin-top: 40px;">No messages. Chat privately with ${getFriendName()}.</div>`;
                 return;
             }
 
@@ -1878,7 +2293,7 @@
                 if (i === 0) {
                     const div = document.createElement('div');
                     div.className = 'date-divider';
-                    div.textContent = 'iMessage Group Room';
+                    div.textContent = 'iMessage direct DMs';
                     container.appendChild(div);
                 }
 
@@ -1887,31 +2302,29 @@
                 const isLast = (i === globalMessages.length - 1) || (globalMessages[i+1].sender !== msg.sender);
 
                 const row = document.createElement('div');
-                row.className = `message-row ${isOutgoing ? 'outgoing' : 'incoming'}`;
+                row.className = `message-row ${isOutgoing ? 'outgoing' : 'incoming'} ${isSMSEnabled ? 'sms' : ''}`;
                 row.style.marginTop = isFirst ? '12px' : '2px';
 
-                const msgKey = `reaction_global_${i}`;
-                const savedReaction = localStorage.getItem(msgKey);
+                // Unique message hashing for local storage attachments mapping (e.g., snaps/reactions)
+                const msgKey = `dbmsg_${i}`;
+                const savedReaction = localStorage.getItem(`reaction_${msgKey}`);
 
-                let senderLabel = '';
-                if (!isOutgoing && isFirst) {
-                    senderLabel = `<span class="message-sender-label">${msg.sender}</span>`;
+                let avatarColHtml = '';
+                // Render circular avatars next to bubble clusters on incoming DMs
+                if (!isOutgoing && isLast) {
+                    avatarColHtml = `<div style="width: 28px; height: 28px; border-radius: 50%; overflow: hidden; position: absolute; left: -36px; bottom: 0;">${getAvatarHtml(friendId, 28)}</div>`;
                 }
 
                 row.innerHTML = `
-                    <div class="message-bubble-wrapper">
-                        ${senderLabel}
-                        <div class="message-bubble ${isLast ? 'last' : ''}" 
-                             ondblclick="openTapbackMenu(event, '${msgKey}', ${isOutgoing})">
-                            ${formatMessageText(msg.text)}
-                        </div>
+                    <div class="message-bubble-wrapper" style="margin-left: ${isOutgoing ? '0' : '36px'}">
+                        ${avatarColHtml}
+                        ${parseMessageBubbleHTML(msg.text, msgKey, isLast, isOutgoing)}
                         ${savedReaction ? `<div class="reactions-badge-container"><div class="reaction-badge" onclick="removeReaction(event, '${msgKey}')">${savedReaction}</div></div>` : ''}
                     </div>
                 `;
 
                 container.appendChild(row);
 
-                // Show delivery receipt under outgoing
                 if (isOutgoing && i === globalMessages.length - 1) {
                     const receipt = document.createElement('div');
                     receipt.className = 'status-receipt';
@@ -1925,29 +2338,32 @@
             }
         }
 
-        // Send Message
+        // Send Message action
         async function sendMessage() {
             const input = document.getElementById('message-input');
-            const text = input.value.trim();
+            let text = input.value.trim();
             if (!text) return;
             
             input.value = '';
-            toggleInputSendBtn(); // resets to mic instantly
+            toggleInputSendBtn();
 
-            // Outgoing Sound synthesis
+            // Intercept and wrap if snap mode enabled
+            if (isSnapMode) {
+                text = `[SNAP] ${text}`;
+                // auto disable snap mode
+                toggleSnapMode();
+            }
+
             playSound('send');
 
-            if (activeThreadId === 'global') {
-                // Post live to Supabase
+            if (activeThreadId === 'friend') {
                 await fetch('/send', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ text: text })
                 });
-                
-                fetchGlobalMessages(); // Refresh UI
+                fetchFriendMessages();
             } else {
-                // Mock local threads sending
                 const activeThread = threads[activeThreadId];
                 activeThread.messages.push({ sender: currentUser, text: text });
                 activeThread.lastMessage = text;
@@ -1957,14 +2373,55 @@
                 renderSidebarConversations();
                 renderChatHistory();
 
-                // If Craig thread, trigger typing simulation response
                 if (activeThreadId === 'craig') {
                     triggerCraigResponse(text);
                 }
             }
         }
 
-        // Handle Enter key inside text field
+        // Shared Geolocation logic
+        function shareLocation() {
+            if (!('geolocation' in navigator)) {
+                alert("Geolocation is not supported by your browser.");
+                return;
+            }
+
+            // Hide plus attachments panel
+            document.getElementById('plus-panel').classList.remove('active');
+
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    const text = `[LOCATION] ${lat},${lng}`;
+                    
+                    playSound('send');
+
+                    if (activeThreadId === 'friend') {
+                        await fetch('/send', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ text: text })
+                        });
+                        fetchFriendMessages();
+                    } else {
+                        // Mock local DMs
+                        threads[activeThreadId].messages.push({ sender: currentUser, text: text });
+                        threads[activeThreadId].lastMessage = '📍 Shared Location';
+                        threads[activeThreadId].lastTime = 'Now';
+                        
+                        saveConversationsCache();
+                        renderSidebarConversations();
+                        renderChatHistory();
+                    }
+                },
+                (err) => {
+                    alert(`Unable to share location: ${err.message}. Please check browser GPS permissions.`);
+                },
+                { enableHighAccuracy: true, timeout: 8000 }
+            );
+        }
+
         function handleInputKey(event) {
             if (event.key === 'Enter') {
                 event.preventDefault();
@@ -1972,7 +2429,7 @@
             }
         }
 
-        // Toggle context capsule arrow/microphone display
+        // Toggle microphone / send button icon based on text typing
         function toggleInputSendBtn() {
             const input = document.getElementById('message-input');
             const sendBtn = document.getElementById('send-btn');
@@ -1980,25 +2437,21 @@
             
             if (input.value.trim().length > 0) {
                 sendBtn.classList.add('active');
-                micBtn.style.opacity = '0';
-                micBtn.style.pointerEvents = 'none';
+                micBtn.style.display = 'none';
             } else {
                 sendBtn.classList.remove('active');
-                micBtn.style.opacity = '1';
-                micBtn.style.pointerEvents = 'auto';
+                micBtn.style.display = 'flex';
             }
         }
 
-        // Craig Federighi Chatbot engine
+        // Bot Craig responses
         function triggerCraigResponse(userText) {
             const indicator = document.getElementById('typing-indicator');
             const container = document.getElementById('messages-container');
             
-            // Reveal bouncing dots
             indicator.style.display = 'block';
             container.scrollTop = container.scrollHeight;
 
-            // List of funny Craig replies
             const craigResponses = [
                 "Hair Force One is cleared for takeoff! ✈️ This interface design is absolutely breathtaking. We engineered it to run at a full, buttery-smooth 120Hz refresh rate!",
                 "Good morning! Boom! 💥 The glassmorphic backdrop you designed is just brilliant. It matches Apple design standards to a T.",
@@ -2010,17 +2463,12 @@
                 "Let's get back to writing some beautiful widgets! What features should we ship in the next update?"
             ];
 
-            // Select random response
             const replyText = craigResponses[Math.floor(Math.random() * craigResponses.length)];
 
             setTimeout(() => {
-                // Hide dots
                 indicator.style.display = 'none';
-                
-                // Play notification chime sound
                 playSound('receive');
 
-                // Add response
                 threads['craig'].messages.push({ sender: 'Craig Federighi', text: replyText });
                 threads['craig'].lastMessage = replyText;
                 threads['craig'].lastTime = 'Now';
@@ -2028,11 +2476,10 @@
                 saveConversationsCache();
                 renderSidebarConversations();
                 renderChatHistory();
-                
             }, 2000);
         }
 
-        // Tapback reactions controllers
+        // Reactions overlay management
         let activeReactionMsgKey = null;
 
         function openTapbackMenu(event, msgKey, isOutgoing) {
@@ -2047,20 +2494,16 @@
             overlay.style.display = 'block';
             setTimeout(() => overlay.style.opacity = '1', 10);
             
-            // Position reaction menu directly above the double-clicked bubble
             const bubbleRect = event.target.getBoundingClientRect();
-            
-            // Adjust position offset
             const topPos = bubbleRect.top - 55;
             let leftPos = bubbleRect.left;
             
             if (isOutgoing) {
-                leftPos = bubbleRect.right - 230; // offset right
+                leftPos = bubbleRect.right - 230;
             } else {
-                leftPos = bubbleRect.left + 20; // offset left
+                leftPos = bubbleRect.left + 20;
             }
             
-            // Keep on screen boundary checks
             leftPos = Math.max(10, Math.min(leftPos, window.innerWidth - 250));
             
             menu.style.top = `${topPos}px`;
@@ -2083,15 +2526,13 @@
         function handleTapbackSelect(emoji) {
             if (!activeReactionMsgKey) return;
             
-            // Save reaction
-            localStorage.setItem(activeReactionMsgKey, emoji);
+            localStorage.setItem(`reaction_${activeReactionMsgKey}`, emoji);
             playSound('send');
             
             closeTapbackMenu();
             
-            // Reload views
-            if (activeThreadId === 'global') {
-                renderGlobalMessages();
+            if (activeThreadId === 'friend') {
+                renderFriendMessages();
             } else {
                 renderChatHistory();
             }
@@ -2099,16 +2540,15 @@
 
         function removeReaction(event, msgKey) {
             event.stopPropagation();
-            localStorage.removeItem(msgKey);
+            localStorage.removeItem(`reaction_${msgKey}`);
             
-            if (activeThreadId === 'global') {
-                renderGlobalMessages();
+            if (activeThreadId === 'friend') {
+                renderFriendMessages();
             } else {
                 renderChatHistory();
             }
         }
 
-        // Expansion menu actions mocked
         function sendActionMock(name) {
             alert(`iOS Native ${name} module triggered (Demo simulation).`);
         }
