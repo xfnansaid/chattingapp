@@ -1,12 +1,453 @@
 <!DOCTYPE html>
-<html>
-<head><title>Login</title></head>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iMessage - Sign In</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 60px 20px 40px;
+            background: radial-gradient(circle at 20% 30%, #ff4b91, transparent 50%),
+                        radial-gradient(circle at 80% 70%, #3b0a86, transparent 50%),
+                        radial-gradient(circle at 50% 50%, #0d051a, #05010a);
+            background-size: cover;
+            overflow: hidden;
+            color: #fff;
+        }
+
+        /* iOS Clock and Date Display */
+        .lockscreen-header {
+            text-align: center;
+            margin-top: 20px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .lockscreen-date {
+            font-size: 20px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 5px;
+            letter-spacing: -0.2px;
+        }
+
+        .lockscreen-time {
+            font-size: 80px;
+            font-weight: 200;
+            color: #fff;
+            line-height: 1;
+            letter-spacing: -1.5px;
+        }
+
+        /* Glassmorphic Login Card */
+        .login-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 28px;
+            width: 100%;
+            max-width: 360px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            margin-bottom: auto;
+            margin-top: 40px;
+        }
+
+        .avatar-container {
+            width: 76px;
+            height: 76px;
+            background: linear-gradient(135deg, #007aff, #0056b3);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 16px rgba(0, 74, 154, 0.3);
+        }
+
+        .avatar-container svg {
+            width: 42px;
+            height: 42px;
+            fill: none;
+            stroke: #fff;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .login-card h2 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            letter-spacing: -0.5px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 8px;
+        }
+
+        .input-field {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-size: 16px;
+            color: #fff;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .input-field::placeholder {
+            color: rgba(255, 255, 255, 0.35);
+        }
+
+        .input-field:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #007aff;
+            box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.25);
+        }
+
+        .login-btn {
+            width: 100%;
+            background: #007aff;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+        }
+
+        .login-btn:hover {
+            background: #147efb;
+            box-shadow: 0 6px 16px rgba(0, 122, 255, 0.45);
+        }
+
+        .login-btn:active {
+            transform: scale(0.98);
+        }
+
+        .error-message {
+            color: #ff453a;
+            font-size: 14px;
+            margin-top: 14px;
+            display: none;
+            font-weight: 500;
+        }
+
+        /* iOS Notification Banner for Demo Credentials */
+        .notification-banner {
+            width: 100%;
+            max-width: 360px;
+            background: rgba(25, 25, 27, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 18px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: bannerIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+        }
+
+        .notification-banner:hover {
+            transform: translateY(-2px);
+            background: rgba(35, 35, 38, 0.85);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .notification-icon {
+            width: 38px;
+            height: 38px;
+            background: #34c759;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .notification-icon svg {
+            width: 22px;
+            height: 22px;
+            fill: none;
+            stroke: #fff;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .notification-content {
+            flex-grow: 1;
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3px;
+        }
+
+        .notification-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.85);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .notification-time {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.45);
+        }
+
+        .notification-body {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.95);
+            line-height: 1.4;
+        }
+
+        .notification-tip {
+            font-size: 11px;
+            color: #0a84ff;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bannerIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            15%, 45%, 75% { transform: translateX(-8px); }
+            30%, 60%, 90% { transform: translateX(8px); }
+        }
+
+        .shake {
+            animation: shake 0.45s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        @media (max-height: 650px) {
+            body {
+                padding: 20px 20px 20px;
+                justify-content: center;
+                gap: 20px;
+                overflow-y: auto;
+            }
+            .lockscreen-header {
+                margin-top: 0;
+            }
+            .lockscreen-time {
+                font-size: 50px;
+            }
+            .login-card {
+                margin-top: 0;
+                margin-bottom: 0;
+            }
+        }
+    </style>
+</head>
 <body>
-    <h2>Sign In</h2>
-    <form action="/login" method="POST">
-        <input type="text" name="username" placeholder="Username" required>
-        <input type="password" name="password" placeholder="Password" required>
-        <button type="submit">Login</button>
-    </form>
+
+    <!-- Lockscreen Clock & Date -->
+    <div class="lockscreen-header">
+        <div class="lockscreen-date" id="ios-date">Sunday, June 7</div>
+        <div class="lockscreen-time" id="ios-time">09:41</div>
+    </div>
+
+    <!-- Login Panel -->
+    <div class="login-card" id="login-card">
+        <div class="avatar-container">
+            <svg viewBox="0 0 24 24">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+        </div>
+        <h2>iMessage</h2>
+        <form id="login-form">
+            <div class="form-group">
+                <label for="username">Apple ID (Username)</label>
+                <input type="text" id="username" name="username" class="input-field" placeholder="e.g., user1" required autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" class="input-field" placeholder="••••••••" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="login-btn" id="submit-btn">Sign In</button>
+            <div class="error-message" id="error-msg">Incorrect credentials</div>
+        </form>
+    </div>
+
+    <!-- Demo Accounts Notification Widget -->
+    <div class="notification-banner" id="demo-banner">
+        <div class="notification-icon">
+            <svg viewBox="0 0 24 24">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+        </div>
+        <div class="notification-content">
+            <div class="notification-header">
+                <span class="notification-title">System Administrator</span>
+                <span class="notification-time">now</span>
+            </div>
+            <div class="notification-body">
+                Demo Accounts Ready. Use <strong>user1 / pass123</strong> or <strong>user2 / pass456</strong>.
+            </div>
+            <div class="notification-tip">Tap this banner to autofill user1 details.</div>
+        </div>
+    </div>
+
+    <script>
+        // Update Time & Date
+        function updateTime() {
+            const timeEl = document.getElementById('ios-time');
+            const dateEl = document.getElementById('ios-date');
+            
+            const now = new Date();
+            
+            // Format time: HH:MM
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            hours = hours < 10 ? '0' + hours : hours;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            timeEl.textContent = `${hours}:${minutes}`;
+            
+            // Format date: Day of week, Month Day
+            const options = { weekday: 'long', month: 'long', day: 'numeric' };
+            dateEl.textContent = now.toLocaleDateString('en-US', options);
+        }
+        
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        // Autofill notification action
+        const banner = document.getElementById('demo-banner');
+        const userInp = document.getElementById('username');
+        const passInp = document.getElementById('password');
+        
+        banner.addEventListener('click', () => {
+            userInp.value = 'user1';
+            passInp.value = 'pass123';
+            
+            // Highlight fields briefly
+            userInp.style.backgroundColor = 'rgba(0, 122, 255, 0.15)';
+            passInp.style.backgroundColor = 'rgba(0, 122, 255, 0.15)';
+            setTimeout(() => {
+                userInp.style.backgroundColor = '';
+                passInp.style.backgroundColor = '';
+            }, 500);
+        });
+
+        // Form Submit interception for iOS shake animation
+        const form = document.getElementById('login-form');
+        const card = document.getElementById('login-card');
+        const errorMsg = document.getElementById('error-msg');
+        const submitBtn = document.getElementById('submit-btn');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorMsg.style.display = 'none';
+            submitBtn.textContent = 'Connecting...';
+            submitBtn.disabled = true;
+            
+            const username = userInp.value;
+            const password = passInp.value;
+
+            // Submit using form URL encoded format
+            const details = {
+                'username': username,
+                'password': password
+            };
+
+            const formBody = [];
+            for (const property in details) {
+                const encodedKey = encodeURIComponent(property);
+                const encodedValue = encodeURIComponent(details[property]);
+                formBody.push(encodedKey + "=" + encodedValue);
+            }
+            const bodyStr = formBody.join("&");
+
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                    },
+                    body: bodyStr
+                });
+
+                if (response.ok) {
+                    // Success! Redirect to /chat
+                    window.location.href = '/chat';
+                } else {
+                    throw new Error("Invalid credentials");
+                }
+            } catch (err) {
+                submitBtn.textContent = 'Sign In';
+                submitBtn.disabled = false;
+                errorMsg.style.display = 'block';
+                
+                // Shake the card!
+                card.classList.remove('shake');
+                void card.offsetWidth; // Force reflow to restart animation
+                card.classList.add('shake');
+                
+                // Vibrate if supported
+                if (navigator.vibrate) {
+                    navigator.vibrate([100, 50, 100]);
+                }
+            }
+        });
+    </script>
 </body>
 </html>
